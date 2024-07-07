@@ -3,11 +3,14 @@ module github.com/Narven/spartan
 go 1.22.5
 
 require (
+	github.com/CloudyKit/jet v2.1.2+incompatible
+	github.com/iancoleman/strcase v0.3.0
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
 )
 
 require (
+	github.com/CloudyKit/fastprinter v0.0.0-20200109182630-33d98a066a53 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect

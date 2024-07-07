@@ -1,0 +1,9 @@
+package views
+
+import "{{ layoutsPath }}"
+
+templ {{ resourceName }}Create() {
+  <p>
+    Create a {{ resourceName }}
+  </p>
+}

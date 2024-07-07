@@ -1,0 +1,20 @@
+package handler
+
+import (
+	"net/http"
+
+	"{{ viewsPath }}"
+)
+
+func (h *Handler) {{ handlerName }}(w http.ResponseWriter, r *http.Request) {
+	{{ handlerName }}s, err := h.client.{{ handlerName }}.Query().All(h.ctx)
+	if err != nil {
+		views.Error(500, err.Error())
+	}
+
+	views.{{ handlerName }}Index(h.ctx, {{ handlerName }}s).Render(h.ctx, w)
+}
+
+func (h *Handler) Handler{{ handlerName }}Create(w http.ResponseWriter, r *http.Request) {
+	views.{{ handlerName }}Create().Render(r.Context(), w)
+}
