@@ -1,10 +1,11 @@
 /*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
+Copyright © 2024 Pedro Luz <pedromsluz@gmail.com>
 */
 package cmd
 
 import (
 	"bytes"
+	"embed"
 	"fmt"
 	"os"
 	"reflect"
@@ -13,6 +14,9 @@ import (
 	"github.com/iancoleman/strcase"
 	"github.com/spf13/cobra"
 )
+
+//go:embed templates
+var embededTemplates embed.FS
 
 type CustomTemplate struct {
 	Template        string
@@ -29,6 +33,7 @@ var make_handlerCmd = &cobra.Command{
 	Long:  `Make a new handler`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("make:handler called")
+		View.SetDevelopmentMode(true)
 
 		name := cmd.Flags().Lookup("name").Value.String()
 
@@ -40,25 +45,16 @@ var make_handlerCmd = &cobra.Command{
 
 		// projectPath := "example"
 		moduleName := "example" // TEMP
-		moduleViews := fmt.Sprintf("%s/resources/views", moduleName)
-		moduleLayouts := fmt.Sprintf("%s/resources/layouts", moduleName)
 
 		vars := jet.VarMap{
-			"viewsPath":    reflect.ValueOf(moduleViews),
-			"layoutsPath":  reflect.ValueOf(moduleLayouts),
 			"handlerName":  handlerName,
 			"resourceName": handlerName,
 		}
 
 		templates := []CustomTemplate{
 			{
-				Template:        "handler.jet",
+				Template:        "templates/handler.jet",
 				DestinationPath: "%s/handlers/%s_handler.go",
-				Vars:            vars,
-			},
-			{
-				Template:        "view_create_templ.jet",
-				DestinationPath: "%s/resources/views/%s_handler.go",
 				Vars:            vars,
 			},
 		}
@@ -71,7 +67,10 @@ var make_handlerCmd = &cobra.Command{
 				strcase.ToKebab(name),
 			)
 
-			t, err := View.GetTemplate(template.Template)
+			// read the template file in the embeded templates folder
+			b, _ := embededTemplates.ReadFile(template.Template)
+			t, err := View.Parse(template.Template, string(b))
+
 			if err != nil {
 				panic(err)
 			}
@@ -96,14 +95,4 @@ func init() {
 	make_handlerCmd.Flags().StringP("name", "n", "", "Handler name")
 	make_handlerCmd.Flags().StringP("module", "m", "example", "Module name")
 	rootCmd.AddCommand(make_handlerCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// make:handlerCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// make:handlerCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

@@ -1,7 +1,13 @@
 version: "3"
 
 tasks:
-  release:
+  default:
+    desc: "List all available tasks"
     cmds:
-      - goreleaser release --clean --skip=publish
+      - task --list-all
+  release-local:
+    desc: "Release locally & copies to /usrlocal/bin"
+    cmds:
+      - goreleaser release --snapshot --clean --skip=publish
+      - yes | cp dist/spartan_darwin_amd64_v1/spartan /usr/local/bin
     silent: true
